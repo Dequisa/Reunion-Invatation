@@ -1,4 +1,4 @@
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import "./Form.css";
 
 function Form() {
@@ -115,7 +115,7 @@ function Form() {
           <h2>Contributions</h2>
           <fieldset>
             <legend>Want to contribute?</legend>
-            <a href="https://www.google.com" target="_blank">
+            <a href="https://www.google.com" target="_blank" rel="noreferrer">
               I want to contribute financially! Click Here
             </a>
             <p>
