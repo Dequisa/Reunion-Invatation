@@ -1,15 +1,63 @@
 import { useHistory } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 import "./Form.css";
 
 function Form() {
+  const [userInfo, setUserInfo] = useState({
+    attending: "",
+    name: "",
+    email: "",
+    phoneNumber: "",
+    socialMedia: "",
+    NoOfGuest: "",
+    contribution: "",
+  });
+
+  const visitorPOST = async (info) => {
+    console.log("InPost", userInfo);
+    try {
+      let postResponse = await axios.post(
+        "https://protected-ocean-06621.herokuapp.com/visitor",
+        // "http://localhost:3001/visitor",
+        userInfo
+      );
+      console.log(postResponse);
+      history.push(`/exit`);
+    } catch (err) {
+      console.log("Error Response From Add User Request:", err);
+    }
+  };
+
   let history = useHistory();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    history.push("/exit");
+    setUserInfo({
+      attending: "",
+      name: "",
+      email: "",
+      phoneNumber: "",
+      socialMedia: "",
+      noOfGuest: "",
+      contribution: "",
+    });
+    visitorPOST();
+  };
+  const handleSelect = (event) => {
+    // console.log(event.target.value);
+    if (event.target.checked) {
+      setUserInfo({ attending: event.target.value });
+    }
+  };
+
+  const handleTextChange = (event) => {
+    setUserInfo({ ...userInfo, [event.target.id]: event.target.value });
   };
 
   return (
     <div className="Form">
+      {console.log("InReturn", userInfo)}
       <form onSubmit={handleSubmit}>
         <h2>Invitation Form</h2>
         <p>
@@ -26,28 +74,54 @@ function Form() {
           <legend>RSVP</legend>
           <ul>
             <li>
-              <label for="title_1">
-                <input type="radio" id="title_1" name="title" value="K" />
-                Will Attend
-              </label>
+              {/* <label htmlFor="attending"> */}
+              <input
+                type="radio"
+                id="attending"
+                name="rsvp"
+                value="Will Attend"
+                // value={userInfo.attending}
+                onChange={handleSelect}
+                required
+              />
+              Will Attend
+              {/* </label> */}
             </li>
             <li>
-              <label for="title_2">
-                <input type="radio" id="title_2" name="title" value="Q" />
-                Will Not Attend
-              </label>
+              {/* <label htmlFor="Will Not Attend"> */}
+              <input
+                type="radio"
+                id="Will Not Attend"
+                name="rsvp"
+                value="Will Not Attend"
+                onChange={handleSelect}
+              />
+              Will Not Attend
+              {/* </label> */}
             </li>
             <li>
-              <label for="title_3">
-                <input type="radio" id="title_3" name="title" value="J" />
-                Will Not Attend But Would Like to Contribute
-              </label>
+              {/* <label htmlFor="Will Not Attend But Would Like to Contribute"> */}
+              <input
+                type="radio"
+                id="Will Not Attend But Would Like to Contribute"
+                name="rsvp"
+                value="Will Not Attend But Would Like to Contribute"
+                onChange={handleSelect}
+              />
+              Will Not Attend But Would Like to Contribute
+              {/* </label> */}
             </li>
             <li>
-              <label for="title_3">
-                <input type="radio" id="title_3" name="title" value="J" />
-                Undecided
-              </label>
+              {/* <label htmlFor="Undecided"> */}
+              <input
+                type="radio"
+                id="Undecided"
+                name="rsvp"
+                value="Undecided"
+                onChange={handleSelect}
+              />
+              Undecided
+              {/* </label> */}
             </li>
           </ul>
         </fieldset>
@@ -59,7 +133,7 @@ function Form() {
           <fieldset>
             <legend>Your Information</legend>
             <p>
-              <label for="name">
+              <label htmlFor="name">
                 <span>Preferred Name: </span>
                 <strong>
                   <abbr title="required">*</abbr>
@@ -68,28 +142,48 @@ function Form() {
               <input
                 type="text"
                 id="name"
+                value={userInfo.name}
+                onChange={handleTextChange}
                 name="username"
                 required
                 maxLength="35"
               />
             </p>
             <p>
-              <label for="mail">
+              <label htmlFor="mail">
                 <span>E-mail: </span>
               </label>
-              <input type="email" id="mail" name="usermail" />
+              <input
+                type="text"
+                id="email"
+                value={userInfo.email}
+                onChange={handleTextChange}
+                name="usermail"
+              />
             </p>
             <p>
-              <label for="phone">
+              <label htmlFor="phone">
                 <span>Phone Number: </span>
               </label>
-              <input type="text" id="phone" name="phone" />
+              <input
+                type="text"
+                id="phoneNumber"
+                value={userInfo.phoneNumber}
+                onChange={handleTextChange}
+                name="phone"
+              />
             </p>
             <p>
-              <label for="handle">
+              <label htmlFor="handle">
                 <span>Social Media Handle: </span>
               </label>
-              <input type="text" id="handle" name="handle" />
+              <input
+                type="text"
+                id="socialMedia"
+                value={userInfo.socialMedia}
+                onChange={handleTextChange}
+                name="handle"
+              />
             </p>
           </fieldset>
         </section>
@@ -98,13 +192,20 @@ function Form() {
           <fieldset>
             <legend>Guest</legend>
             <p>
-              <label for="guest">
+              <label htmlFor="guest">
                 <span>How many guest do you plan to bring? </span>
                 <strong>
                   <abbr title="required">*</abbr>
                 </strong>
               </label>
-              <input type="number" id="guest" name="guest" required />
+              <input
+                type="number"
+                id="noOfGuest"
+                value={userInfo.noOfGuest}
+                onChange={handleTextChange}
+                name="guest"
+                required
+              />
             </p>
           </fieldset>
         </section>
@@ -115,14 +216,27 @@ function Form() {
           <h2>Contributions</h2>
           <fieldset>
             <legend>Want to contribute?</legend>
-            <a href="https://www.google.com" target="_blank" rel="noreferrer">
-              I want to contribute financially! Click Here
-            </a>
+            <span>
+              I want to contribute financially!
+              <a
+                href="https://www.gofundme.com/f/help-host-the-first-st-agathas-home-reunion?utm_source=customer&utm_medium=copy_link&utm_campaign=p_cf+share-flow-1"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Click Here
+              </a>
+            </span>
             <p>
-              <label for="donate">
-                <span>Non financial contrubtion: </span>
+              <label htmlFor="donate">
+                <span>Non financial contribution: </span>
               </label>
-              <input type="text" id="donate" name="donate" />
+              <input
+                type="text"
+                id="contribution"
+                value={userInfo.contribution}
+                onChange={handleTextChange}
+                name="donate"
+              />
             </p>
           </fieldset>
         </section>
